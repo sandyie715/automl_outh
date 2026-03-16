@@ -22,28 +22,32 @@ APP_URL        = os.getenv("APP_URL", "http://localhost:5173")
 # ═══════════════════════════════════════════════════════════════
 
 def _send(to: str, subject: str, html: str, text: str = "") -> bool:
-    """Send a single email via Gmail SMTP. Returns True on success."""
     if not EMAIL_ADDRESS or not EMAIL_PASSWORD:
-        print("⚠️  Email credentials not set in .env — skipping email send.")
+        print("⚠️ Email credentials not set — skipping email.")
         return False
+
     try:
         msg = MIMEMultipart("alternative")
         msg["Subject"] = subject
-        msg["From"]    = f"{APP_NAME} <{EMAIL_ADDRESS}>"
-        msg["To"]      = to
+        msg["From"] = f"{APP_NAME} <{EMAIL_ADDRESS}>"
+        msg["To"] = to
+
         if text:
             msg.attach(MIMEText(text, "plain"))
+
         msg.attach(MIMEText(html, "html"))
-        with smtplib.SMTP_SSL("smtp.gmail.com", 587) as server:
+
+        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+            server.starttls()
             server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
             server.sendmail(EMAIL_ADDRESS, to, msg.as_string())
-        print(f"✅ Email sent  →  {to}  |  {subject}")
+
+        print(f"✅ Email sent → {to}")
         return True
+
     except Exception as e:
-        print(f"❌ Email failed → {to} | {e}")
+        print(f"❌ Email failed → {e}")
         return False
-
-
 # ═══════════════════════════════════════════════════════════════
 #  Shared premium layout wrapper  (black & white theme)
 # ═══════════════════════════════════════════════════════════════
