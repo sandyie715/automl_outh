@@ -34,7 +34,7 @@ def _send(to: str, subject: str, html: str, text: str = "") -> bool:
         if text:
             msg.attach(MIMEText(text, "plain"))
         msg.attach(MIMEText(html, "html"))
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 587) as server:
             server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
             server.sendmail(EMAIL_ADDRESS, to, msg.as_string())
         print(f"✅ Email sent  →  {to}  |  {subject}")
